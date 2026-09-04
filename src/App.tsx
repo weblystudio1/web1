@@ -253,13 +253,8 @@ const Hero = () => {
 const Story = () => (
   <section id="story" className="short-story" aria-labelledby="story-heading">
     <div className="story-photo">
-      <img 
-        src="https://res.cloudinary.com/dqsxisjlg/image/upload/v1788533429/8ce0e91e-2229-4b2d-82ba-9f0c32e09f3e.png" 
-        alt="תמונה של השותף ב-Webly" 
-        className="absolute inset-0 w-full h-full object-cover z-0" 
-        loading="lazy"
-        referrerPolicy="no-referrer"
-      />
+      <strong aria-hidden="true">W</strong>
+      <span>התמונה תתווסף כאן</span>
       <i aria-hidden="true">PORTRAIT / 01</i>
     </div>
     <div className="story-copy">
