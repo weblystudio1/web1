@@ -69,8 +69,6 @@ const STRINGS = {
     },
     successMessage:
       "פנייתכם התקבלה בהצלחה! נחזור אליכם בהקדם עם בדיקת התאמה ראשונית.",
-    placeholderSubmissionNotice:
-      "הערת מערכת: כתובת ה־API לשליחה טרם הוגדרה בקובץ ההגדרות. הפרטים נבדקו בהצלחה ואינם נשלחים לשרת חיצוני בלתי מוגדר.",
   },
   footer: {
     tagline:
@@ -342,7 +340,7 @@ const LeadForm = ({
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) {
       triggerAnalytics("lead_form_error", {
@@ -353,12 +351,42 @@ const LeadForm = ({
       }, 50);
       return;
     }
+
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "7a9ce23f-d8c5-4207-8d66-884aac2a8deb",
+          name: fullName,
+          email: email || "לא הוזן",
+          phone: phone,
+          business_name: businessName || "לא הוזן",
+          solution_type: solutionType,
+          message: message || "לא הוזן",
+          from_name: "Webly Studio Lead",
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setIsSubmitted(true);
+        triggerAnalytics("lead_form_submit", { recommendation: solutionType });
+      } else {
+        setErrors({ submit: "אירעה שגיאה בשליחת הטופס, אנא נסה שוב." });
+        setTimeout(() => errorSummaryRef.current?.focus(), 50);
+      }
+    } catch (error) {
+      setErrors({ submit: "אירעה שגיאה בשליחת הטופס, אנא נסה שוב." });
+      setTimeout(() => errorSummaryRef.current?.focus(), 50);
+    } finally {
       setIsSubmitting(false);
-      setIsSubmitted(true);
-      triggerAnalytics("lead_form_submit", { recommendation: solutionType });
-    }, 600);
+    }
   };
 
   const errorCount = Object.keys(errors).length;
@@ -396,6 +424,11 @@ const LeadForm = ({
                 נמצאו {errorCount} שגיאות בטופס. נא לתקן את השדות הבאים:
               </h3>
               <ul className="mt-2 list-disc list-inside space-y-1 text-xs text-red-200">
+                {errors.submit && (
+                  <li>
+                    <span className="text-red-200">{errors.submit}</span>
+                  </li>
+                )}
                 {errors.fullName && (
                   <li>
                     <a
@@ -468,9 +501,6 @@ const LeadForm = ({
               <p className="mt-2 text-xs text-[#CBD5E1]">
                 תודה שפניתם אלינו, נציג Webly יצור עמכם קשר בהקדם.
               </p>
-              <div className="mt-4 rounded-lg bg-[#07111F] p-3 text-xs text-[#94A3B8]">
-                {STRINGS.leadForm.placeholderSubmissionNotice}
-              </div>
               <button
                 type="button"
                 onClick={() => setIsSubmitted(false)}
