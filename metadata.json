@@ -1,0 +1,8 @@
+{
+  "name": "Remix Webly Studio",
+  "description": "אנחנו מתאימים את סוג האתר לגודל העסק, למטרות ולתקציב שלכם. מדף נחיתה ואתר תדמית ועד חנות דיגיטלית ומערכות אוטומציה — עם יחס אישי ונגישות כחלק מהבנייה.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
